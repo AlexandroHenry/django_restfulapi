@@ -74,3 +74,76 @@
 # 가상환경 실행하기
 #### source 가상환경폴더/bin/activate
 
+# NGINX
+#### sudo apt-get purge nginx nginx-common nginx-full
+#### sudo apt-get install nginx
+
+
+
+# gunicorn을 통한 django nginx 연동하기
+#### sudo apt update
+#### sudo apt upgrade
+#### sudo apt install python3-pip
+
+#### Virtualenv 설치 및 실행 후
+#### Django 설치
+
+#### djangoadmin startproject 프로젝트이름
+#### 프로젝트 실행 해보기
+
+#### pip3 install gunicorn
+#### gunicorn --bind 0:80 프로젝트명.wsgi:application
+
+### Gunicorn 서비스등록
+#### sudo vi /etc/systemd/system/gunicorn.service
+
+### 파일 내용
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/root/django_restfulapi (프로젝트 루트 주소를 적어줍니다 (pwd 로 루트 주소 확인 가능))
+ExecStart=/root/django_restfulapi/venv/bin/gunicorn --bind 0.0.0.0:80 프로젝트명.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+#### sudo systemctl daemon-reload
+#### sudo systemctl start gunicorn
+#### sudo systemctl enable gunicorn
+#### sudo systemctl status gunicorn.service
+
+### NGINX 설치 및 실행
+#### sudo apt-get install nginx
+#### systemctl start nginx
+
+### NGINX & Django 연동
+#### vi /etc/nginx/nginx.conf
+
+### 파일내용
+http {
+    include /etc/nginx/conf.d/*.conf;  (이부분만 바꿔주면 됩니다. 아래 몇줄은 그냥 이게 대충 어디인지 확인하려고 쓴거임)
+    default_type application/octet-stream;
+
+    ##
+    # SSL Settings
+}
+
+#### vi /etc/nginx/conf.d/default.conf
+### 파일내용
+server {
+	listen 80;
+	server_name 0.0.0.0;
+
+	location / {
+		include proxy_params;
+		proxy_pass http://0.0.0.0:80;
+	}
+}
+
+#### service nginx restart
+
+### 참고 : https://www.youtube.com/watch?v=nGoA1R1_pR0
