@@ -21,8 +21,8 @@ client = pymongo.MongoClient('mongodb+srv://alaxhenry:Tmdcjdahzk123@alaxhenry.3b
 db = client['wallboy_db']
 stockTransactionCol = db["stockTransaction"]
 userInfoCol = db["userInfo"]
-
 ownStockCol = db["ownStock"]
+ownAssetCol = db["ownAsset"]
 # Create your views here.
 
 def timeseriesAPI(request, symbol, period, interval):
@@ -261,7 +261,6 @@ def userFindAPI(request, id):
     # account.append(data)
     return HttpResponse(json_util.dumps(data), content_type="application/json")
 
-
 @csrf_exempt
 @api_view(['GET','POST'])
 def profileImageAPI(request, name, userid):
@@ -288,3 +287,32 @@ def profileImageAPI(request, name, userid):
 
         success = "[{upload : 사진 저장 성공!}]"
         return HttpResponse(json.dumps(success), content_type="application/json")
+
+@csrf_exempt
+def myAssetUpdateAPI(request):
+
+    for x in userInfoCol.find():
+        total = 0
+
+        for y in ownStockCol.find({'owner': x["id"]}):
+            print(y)
+            
+            sum = float(y["price"]) * float(y["quantity"])
+            total += sum
+
+        data = {'id': x["id"], 'cash': x["cash"], 'stockValue': str(total), 'updatedAt': datetime.now()}
+        ownAssetCol.insert_one(data)
+
+    data = {"result": "success"}
+    return HttpResponse(json_util.dumps(data), content_type="application/json")
+
+@csrf_exempt
+def myAssetViewAPI(request, id):
+    assetHistory = []
+    
+    result = ownAssetCol.find({'id': id})
+    for i in result:
+        data = {'id': i["id"], 'cash': i["cash"], 'stock': i["stockValue"], 'updatedAt': i["updatedAt"]}
+        assetHistory.append(data)
+
+    return HttpResponse(json_util.dumps(assetHistory), content_type="application/json")

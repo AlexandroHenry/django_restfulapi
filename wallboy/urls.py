@@ -18,4 +18,6 @@ urlpatterns = [
     path("stocktransaction/sell/owner=<str:owner>&symbol=<str:symbol>&price=<str:price>&quantity=<str:quantity>", stockSellAPI),
     path("stocktransaction/own/owner=<str:owner>", ownStockAPI),
     path("imageupload/name=<str:name>&userid=<str:userid>", profileImageAPI),
+    path("assetDaily", myAssetUpdateAPI), # Uploading myasset test
+    path("myasset/id=<str:id>", myAssetViewAPI)
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

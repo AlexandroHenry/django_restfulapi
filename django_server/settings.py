@@ -38,6 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'wallboy',
+    'django_crontab'
+]
+
+CRONJOBS = [
+    ('* * */1 * *', 'wallboy.cron.my_scheduled_job')
 ]
 
 MIDDLEWARE = [
