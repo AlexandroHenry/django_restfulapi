@@ -107,7 +107,6 @@ def stockTransactionAPI(request, action, symbol, price, quantity, owner):
         success = "{upload : success}"
         return HttpResponse(json.dumps(success), content_type="application/json")
 
-
 @api_view(['GET'])
 def stockListAPI(request, owner):
     
@@ -240,7 +239,6 @@ def stockSellAPI(request, owner, symbol, price, quantity):
 
     return HttpResponse(json.dumps(success), content_type="application/json")
 
-
 @csrf_exempt
 def userRegisterAPI(request, id, email):
     
@@ -248,7 +246,7 @@ def userRegisterAPI(request, id, email):
 
     if result == None and request.method == 'POST':
         
-        data = {'id': id, 'createdAt': datetime.now(), 'email': email, 'nickname': "Wallboy", 'cash': 10000, 'imageURL': "https://cdn.vectorstock.com/i/preview-1x/22/05/male-profile-picture-vector-1862205.jpg"}
+        data = {'id': id, 'createdAt': datetime.now(), 'email': email, 'nickname': "Wallboy", 'cash': '10000', 'imageURL': "https://cdn.vectorstock.com/i/preview-1x/22/05/male-profile-picture-vector-1862205.jpg"}
         userInfoCol.insert_one(data)
 
         success = "{upload : 회원가입 성공!}"

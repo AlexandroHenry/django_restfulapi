@@ -74,7 +74,7 @@ class userInfo(models.Model):
     email = models.EmailField()
     createdAt = models.DateField()
     nickname = models.CharField(max_length=100)
-    cash = models.DecimalField(max_digits=100, decimal_places=30)
+    cash = models.CharField(max_length=100)
     imageURL = models.CharField(max_length=200)
 
 class ownStock(models.Model):
