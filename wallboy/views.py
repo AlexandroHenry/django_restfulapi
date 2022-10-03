@@ -312,7 +312,7 @@ def myAssetViewAPI(request, id):
     
     result = ownAssetCol.find({'id': id})
     for i in result:
-        data = {'id': i["id"], 'cash': i["cash"], 'stock': i["stockValue"], 'updatedAt': i["updatedAt"]}
+        data = {'id': i["id"], 'cash': i["cash"], 'stock': i["stockValue"], 'updatedAt': str(i["updatedAt"])[0:10]}
         assetHistory.append(data)
 
     return HttpResponse(json_util.dumps(assetHistory), content_type="application/json")

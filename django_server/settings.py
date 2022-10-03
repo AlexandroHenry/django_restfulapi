@@ -42,7 +42,7 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = [
-    ('* * */1 * *', 'wallboy.cron.my_scheduled_job')
+    ('59 23 * * *', 'wallboy.cron.my_scheduled_job')
 ]
 
 MIDDLEWARE = [
