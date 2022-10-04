@@ -78,8 +78,6 @@
 #### sudo apt-get purge nginx nginx-common nginx-full
 #### sudo apt-get install nginx
 
-
-
 # gunicorn을 통한 django nginx 연동하기
 #### sudo apt update
 #### sudo apt upgrade

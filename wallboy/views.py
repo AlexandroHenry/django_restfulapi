@@ -253,7 +253,6 @@ def userRegisterAPI(request, id, email):
         return HttpResponse(json.dumps(success), content_type="application/json")
 
 def userFindAPI(request, id):
-
     result = userInfoCol.find_one({"id": id})
     print(result)
 
@@ -316,3 +315,25 @@ def myAssetViewAPI(request, id):
         assetHistory.append(data)
 
     return HttpResponse(json_util.dumps(assetHistory), content_type="application/json")
+
+@csrf_exempt
+def myStockCurrentPrice(request, owner):
+    symbols= []
+    prices = []
+    symbolsText = ""
+    stocks = ownStockCol.find({'owner': owner})
+    
+    for i in stocks:
+        symbols.append(i["symbol"])
+
+    for i in symbols:
+        symbolsText += f"{i} "
+
+    date = datetime.today().strftime('%Y-%m-%d')
+    df = yf.download(symbolsText[0:-1], date).reset_index(drop=True)
+    
+    for i in symbols:
+        data = {'symbol': i, 'adjclose': round(df['Adj Close'][i].iloc[0], 2)}
+        prices.append(data)
+
+    return HttpResponse(json_util.dumps(prices), content_type="application/json")
