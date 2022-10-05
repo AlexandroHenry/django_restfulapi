@@ -12,7 +12,7 @@ import yfinance as yf
 import uuid
 import json
 import pymongo
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 import bson.json_util as json_util
@@ -664,3 +664,23 @@ def singleIndex(request, symbol):
         index.append(data)
 
     return HttpResponse(json_util.dumps(index, ensure_ascii=False), content_type="application/json;  charset=utf-8")
+
+@csrf_exempt
+def indexPriceHistory(request, symbol):
+    datebox = []
+    prices = []
+    priceHistory = []
+
+    date = (datetime.now() - timedelta(days=31)).strftime('%Y-%m-%d')
+    df = yf.download(symbol, date)
+
+    for i in df.index:
+        datebox.append(i.strftime('%Y-%m-%d'))
+
+    for i in df["Adj Close"]:
+        prices.append(i)
+
+    for date, price in zip(datebox, prices):
+        data =  {"date": date, "adjClose": price}
+        priceHistory.append(data)
+    return HttpResponse(json_util.dumps(priceHistory, ensure_ascii=False), content_type="application/json;  charset=utf-8")
