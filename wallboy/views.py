@@ -337,3 +337,162 @@ def myStockCurrentPrice(request, owner):
         prices.append(data)
 
     return HttpResponse(json_util.dumps(prices), content_type="application/json")
+
+@csrf_exempt
+def indices(request):
+    indices = []
+
+    indicesUS = ['^DJI', '^IXIC', '^GSPC', '^VIX', '^RUT']
+    indicesAsia = ['^KS11', '^KQ11', '^N225']
+
+    indicesUSText = ""
+    indicesAsiaText = ""
+
+    for i in indicesUS:
+        indicesUSText += f"{i} "
+
+    date = datetime.today().strftime('%Y-%m-%d')
+    df_US = yf.download(indicesUSText[0:-1], date).reset_index(drop=True)
+
+    for i in indicesUS:
+        if i == "^DJI":
+            data = {'name': 'Dow Jones Composite', 'nameKR': '다우존스 종합지수', 'symbol': i, 'adjclose': round(df_US['Adj Close'][i].iloc[0], 2)}
+        elif i == "^IXIC":
+            data = {'name': 'Nasdaq Composite', 'nameKR': '나스닥 종합지수', 'symbol': i, 'adjclose': round(df_US['Adj Close'][i].iloc[0], 2)}
+        elif i == "^GSPC":
+            data = {'name': 'S&P500', 'nameKR': 'S&P500', 'symbol': i, 'adjclose': round(df_US['Adj Close'][i].iloc[0], 2)}
+        elif i == "^VIX":
+            data = {'name': 'CBOE Volatility Index', 'nameKR': 'VIX 지수', 'symbol': i, 'adjclose': round(df_US['Adj Close'][i].iloc[0], 2)}
+        elif i == "^RUT":
+            data = {'name': 'Russell 2000', 'nameKR': 'Russell 2000', 'symbol': i, 'adjclose': round(df_US['Adj Close'][i].iloc[0], 2)}
+        
+        indices.append(data)
+
+
+    for i in indicesAsia:
+        indicesAsiaText += f"{i} "
+
+    date = datetime.today().strftime('%Y-%m-%d')
+    df_KR = yf.download(indicesAsiaText[0:-1], date).reset_index(drop=True)
+
+    for i in indicesAsia:
+        if i == "^KS11":
+            data = {'name': 'KOSPI Composite Index', 'nameKR': '코스피 종합지수', 'symbol': i, 'adjclose': round(df_KR['Adj Close'][i].iloc[0], 2)}
+        elif i == "^KQ11":
+            data = {'name': 'Kosdaq Composite Index', 'nameKR': '코스닥 종합지수', 'symbol': i, 'adjclose': round(df_KR['Adj Close'][i].iloc[0], 2)}
+        elif i == "^KQ11":
+            data = {'name': 'Nikkei 225', 'nameKR': '닛케이 225', 'symbol': i, 'adjclose': round(df_KR['Adj Close'][i].iloc[0], 2)}
+
+        indices.append(data)
+
+    csi300 = yf.Ticker("000300.SS").stats()["price"]["regularMarketPrice"]
+    data = {'name': 'CSI 300 Index', 'nameKR': '상하이&선전 300', 'symbol': "000300.SS", 'adjclose': round(csi300, 2)}
+    indices.append(data)
+
+    hsi = yf.Ticker("^HSI").stats()["price"]["regularMarketPrice"]
+    data = {'name': 'HANG SENG INDEX', 'nameKR': '항셍 종합지수', 'symbol': "^HSI", 'adjclose': round(hsi, 2)}
+    indices.append(data)
+
+    return HttpResponse(json_util.dumps(indices, ensure_ascii=False), content_type="application/json;  charset=utf-8")
+
+# @csrf_exempt
+def futures(request):
+    futures = []
+
+    # crudeoil, brentoil, RBOB Gasoline (100 곱해주면 USd/gal), Natuaral Gas(USD/MMBtu), Heating oil (100 곱해주면 USd/gal)
+    energy = ['CL=F', 'BZ=F', 'RB=F', 'NG=F', 'HO=F']
+
+    # gold (USD/t oz.), silver (USD/t oz.), copper (100* USd/lb.), platinum(USD/t oz.), palladium (USD/t oz.), Aluminum (USD/MT)
+    metal = ['GC=F', 'SI=F', 'HG=F', 'PL=F', 'PA=F', 'ALI=F']
+
+    # corn (USd/bu.), wheat (USd/bu.), oats (USd/bu.), Rough Rice (USD/cwt), Soybean (USd/bu.), Soybean Meal (USD/T.), Soybeam Oil (USd/lb.)
+    grains = ['ZC=F', 'ZW=F', 'ZO=F', 'ZR=F', 'ZS=F', 'ZM=F', 'ZL=F']
+
+    # Cocoa (USD/MT), coffee (USd/lb.), sugar (USd/lb.), orange juice (USd/lb.), cotton (USd/lb.), Lumber (USD/1000 board feet), Ethanol (USD/gal.)
+    softs = ['CC=F', 'KC=F', 'SB=F', 'OJ=F', 'CT=F', 'LBS=F', 'CU=F']
+
+    # Live Cattle (USd/lb.), Feeder Cattle (USd/lb.), Lean Hogs (USd/lb.)
+    livestock = ['LE=F', 'GF=F', 'HE=F']
+
+    futureSymbolText = ""
+    futureSymbolText2 = ""
+
+    symbols = ['CL=F', 'BZ=F', 'RB=F', 'NG=F', 'HO=F', 'GC=F', 'SI=F', 'HG=F', 'PL=F', 'PA=F', 'ALI=F', 'ZC=F', 'ZW=F', 'ZO=F', 'ZR=F', 'ZS=F', 'ZM=F', 'ZL=F', 'CC=F', 'KC=F', 'SB=F', 'OJ=F', 'CT=F', 'LBS=F']
+    symbols2 = ['CU=F', 'LE=F', 'GF=F', 'HE=F']
+
+    for i in symbols:
+        futureSymbolText += f"{i} "
+
+    for i in symbols2:
+        futureSymbolText2 += f"{i} "
+
+    date = datetime.today().strftime('%Y-%m-%d')
+    df_futures = yf.download(futureSymbolText[0:-1], date).reset_index(drop=True)
+    df_futures2 = yf.download(futureSymbolText2[0:-1], date).reset_index(drop=True)
+
+    for i in symbols:
+        if i == "CL=F":
+            data = {"name": "Crude Oil", "nameKR": "WTI유" , "symbol": i, "unit": "USD/bbl.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "energy"}
+        elif i == "BZ=F":
+            data = {"name": "Brent Oil", "nameKR": "브렌트유" ,  "symbol": i, "unit": "USD/bbl.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "energy"}
+        elif i == "RB=F":
+            data = {"name": "RBOB Gasoline", "nameKR": "가솔린 RBOB" ,  "symbol": i, "unit": "USD/bbl.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "energy"}
+        elif i == "NG=F":
+            data = {"name": "Natuaral Gas", "nameKR": "천연가스" ,  "symbol": i, "unit": "USD/bbl.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "energy"}
+        elif i == "HO=F":
+            data = {"name": "Heating oil", "nameKR": "난방유" ,  "symbol": i, "unit": "USD/bbl.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "energy"}
+        elif i == "GC=F":
+            data = {"name": "Gold", "nameKR": "금" , "symbol": i, "unit": "USD/t oz.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "metal"}
+        elif i == "SI=F":
+            data = {"name": "Silver", "nameKR": "은" ,  "symbol": i, "unit": "USD/t oz.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "metal"}
+        elif i == "HG=F":
+            data = {"name": "Copper", "nameKR": "구리" ,  "symbol": i, "unit": "USd/lb.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "metal"}
+        elif i == "PL=F":
+            data = {"name": "Platinum", "nameKR": "플래티넘" ,  "symbol": i, "unit": "USD/t oz.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "metal"}
+        elif i == "PA=F":
+            data = {"name": "Palladium", "nameKR": "팔라듐" ,  "symbol": i, "unit": "USD/t oz.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "metal"}
+        elif i == "ALI=F":
+            data = {"name": "Aluminum", "nameKR": "알루미늄" ,  "symbol": i, "unit": "USD/MT", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "metal"}
+        elif i == "ZC=F":
+            data = {"name": "Corn", "nameKR": "옥수수" , "symbol": i, "unit": "USd/bu.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "grain"}
+        elif i == "ZW=F":
+            data = {"name": "Wheat", "nameKR": "밀" ,  "symbol": i, "unit": "USd/bu.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "grain"}
+        elif i == "ZO=F":
+            data = {"name": "Oats", "nameKR": "귀리" ,  "symbol": i, "unit": "USd/bu.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "grain"}
+        elif i == "ZR=F":
+            data = {"name": "Rough Rice", "nameKR": "쌀" ,  "symbol": i, "unit": "USD/cwt", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "grain"}
+        elif i == "ZS=F":
+            data = {"name": "Soybean", "nameKR": "대두" ,  "symbol": i, "unit": "USd/bu.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "grain"}
+        elif i == "ZM=F":
+            data = {"name": "Soybean Meal", "nameKR": "대두박" ,  "symbol": i, "unit": "USD/T.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "grain"}
+        elif i == "ZL=F":
+            data = {"name": "Soybeam Oil", "nameKR": "대두유" ,  "symbol": i, "unit": "USd/lb.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "grain"}
+        elif i == "CC=F":
+            data = {"name": "Cocoa", "nameKR": "코코아" , "symbol": i, "unit": "USD/MT", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "soft"}
+        elif i == "KC=F":
+            data = {"name": "Coffee", "nameKR": "커피" ,  "symbol": i, "unit": "USd/lb.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "soft"}
+        elif i == "SB=F":
+            data = {"name": "Sugar", "nameKR": "설탕" ,  "symbol": i, "unit": "USd/lb.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "soft"}
+        elif i == "OJ=F":
+            data = {"name": "Orange Juice", "nameKR": "오렌지쥬스" ,  "symbol": i, "unit": "USd/lb.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "soft"}
+        elif i == "CT=F":
+            data = {"name": "Cotton", "nameKR": "면화" ,  "symbol": i, "unit": "USd/lb.", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "soft"}
+        elif i == "LBS=F":
+            data = {"name": "Lumber", "nameKR": "원목" ,  "symbol": i, "unit": "USD/1000 board feet", "regularMarketPrice": df_futures['Adj Close'][i].iloc[0], "type": "soft"}
+
+        futures.append(data)
+
+    for j in symbols2:
+        if j == "CU=F":
+            data = {"name": "Ethanol", "nameKR": "에탄올" ,  "symbol": j, "unit": "USD/gal.", "regularMarketPrice": df_futures2['Adj Close'][j].iloc[0], "type": "soft"}
+        elif j == "LE=F":
+            data = {"name": "Live Cattle", "nameKR": "생우" , "symbol": j, "unit": "USd/lb.", "regularMarketPrice": df_futures2['Adj Close'][j].iloc[0], "type": "livestock"}
+        elif j == "GF=F":
+            data = {"name": "Feeder Cattle", "nameKR": "육우" ,  "symbol": j, "unit": "USd/lb.", "regularMarketPrice": df_futures2['Adj Close'][j].iloc[0], "type": "livestock"}
+        elif j == "HE=F":
+            data = {"name": "Lean Hogs", "nameKR": "돈육" ,  "symbol": j, "unit": "USd/lb.", "regularMarketPrice": df_futures2['Adj Close'][j].iloc[0], "type": "livestock"}
+        futures.append(data)
+
+    return HttpResponse(json_util.dumps(futures, ensure_ascii=False), content_type="application/json;  charset=utf-8")
+        
+        
