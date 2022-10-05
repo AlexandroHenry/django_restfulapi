@@ -380,7 +380,7 @@ def indices(request):
             data = {'name': 'KOSPI Composite Index', 'nameKR': '코스피 종합지수', 'symbol': i, 'adjclose': round(df_KR['Adj Close'][i].iloc[0], 2)}
         elif i == "^KQ11":
             data = {'name': 'Kosdaq Composite Index', 'nameKR': '코스닥 종합지수', 'symbol': i, 'adjclose': round(df_KR['Adj Close'][i].iloc[0], 2)}
-        elif i == "^KQ11":
+        elif i == "^N225":
             data = {'name': 'Nikkei 225', 'nameKR': '닛케이 225', 'symbol': i, 'adjclose': round(df_KR['Adj Close'][i].iloc[0], 2)}
 
         indices.append(data)
@@ -503,3 +503,164 @@ def indicesChosen(request):
         indicesResult.append(data)
 
     return HttpResponse(json_util.dumps(indicesResult, ensure_ascii=False), content_type="application/json;  charset=utf-8")
+
+@csrf_exempt
+def singleIndex(request, symbol):
+    print(symbol)
+    date = datetime.today().strftime('%Y-%m-%d')
+    index = []
+    
+    if symbol == "CL=F":
+        crudeOil = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Crude Oil", "nameKR": "WTI유" , "symbol": symbol, "unit": "USD/bbl.", "regularMarketPrice": round(crudeOil, 2), "type": "energy"}
+        index.append(data)
+    elif symbol == "BZ=F":
+        brentOil = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Brent Oil", "nameKR": "브렌트유" ,  "symbol": symbol, "unit": "USD/bbl.", "regularMarketPrice": round(brentOil, 2), "type": "energy"}
+        index.append(data)
+    elif symbol == "RB=F":
+        gasoline = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "RBOB Gasoline", "nameKR": "가솔린 RBOB" ,  "symbol": symbol, "unit": "USD/bbl.", "regularMarketPrice": round(gasoline, 2), "type": "energy"}
+        index.append(data)
+    elif symbol == "NG=F":
+        naturalGas = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Natuaral Gas", "nameKR": "천연가스" ,  "symbol": symbol, "unit": "USD/bbl.", "regularMarketPrice": round(naturalGas, 2), "type": "energy"}
+        index.append(data)
+    elif symbol == "HO=F":
+        heatingOil = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Heating oil", "nameKR": "난방유" ,  "symbol": symbol, "unit": "USD/bbl.", "regularMarketPrice": round(heatingOil, 2), "type": "energy"}
+        index.append(data)
+    elif symbol == "GC=F":
+        gold = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Gold", "nameKR": "금" , "symbol": symbol, "unit": "USD/t oz.", "regularMarketPrice": round(gold, 2), "type": "metal"}
+        index.append(data)
+    elif symbol == "SI=F":
+        silver = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Silver", "nameKR": "은" ,  "symbol": symbol, "unit": "USD/t oz.", "regularMarketPrice": round(silver, 2), "type": "metal"}
+        index.append(data)
+    elif symbol == "HG=F":
+        copper = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Copper", "nameKR": "구리" ,  "symbol": symbol, "unit": "USd/lb.", "regularMarketPrice": round(copper, 2), "type": "metal"}
+        index.append(data)
+    elif symbol == "PL=F":
+        platinum = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Platinum", "nameKR": "플래티넘" ,  "symbol": symbol, "unit": "USD/t oz.", "regularMarketPrice": round(platinum, 2), "type": "metal"}
+        index.append(data)
+    elif symbol == "PA=F":
+        palladium = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Palladium", "nameKR": "팔라듐" ,  "symbol": symbol, "unit": "USD/t oz.", "regularMarketPrice": round(palladium, 2), "type": "metal"}
+        index.append(data)
+    elif symbol == "ALI=F":
+        aluminum = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Aluminum", "nameKR": "알루미늄" ,  "symbol": symbol, "unit": "USD/MT", "regularMarketPrice": round(aluminum, 2), "type": "metal"}
+        index.append(data)
+    elif symbol == "ZC=F":
+        corn = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Corn", "nameKR": "옥수수" , "symbol": symbol, "unit": "USd/bu.", "regularMarketPrice": round(corn, 2), "type": "grain"}
+        index.append(data)
+    elif symbol == "ZW=F":
+        wheat = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Wheat", "nameKR": "밀" ,  "symbol": symbol, "unit": "USd/bu.", "regularMarketPrice": round(wheat, 2), "type": "grain"}
+        index.append(data)
+    elif symbol == "ZO=F":
+        oats = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Oats", "nameKR": "귀리" ,  "symbol": symbol, "unit": "USd/bu.", "regularMarketPrice": round(oats, 2), "type": "grain"}
+        index.append(data)
+    elif symbol == "ZR=F":
+        roughRice = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Rough Rice", "nameKR": "쌀" ,  "symbol": symbol, "unit": "USD/cwt", "regularMarketPrice": round(roughRice, 2), "type": "grain"}
+        index.append(data)
+    elif symbol == "ZS=F":
+        soybean = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Soybean", "nameKR": "대두" ,  "symbol": symbol, "unit": "USd/bu.", "regularMarketPrice": round(soybean, 2), "type": "grain"}
+        index.append(data)
+    elif symbol == "ZM=F":
+        soybeanMeal = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Soybean Meal", "nameKR": "대두박" ,  "symbol": symbol, "unit": "USD/T.", "regularMarketPrice": round(soybeanMeal, 2), "type": "grain"}
+        index.append(data)
+    elif symbol == "ZL=F":
+        soybeanOil = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Soybeam Oil", "nameKR": "대두유" ,  "symbol": symbol, "unit": "USd/lb.", "regularMarketPrice": round(soybeanOil, 2), "type": "grain"}
+        index.append(data)
+    elif symbol == "CC=F":
+        cocoa = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Cocoa", "nameKR": "코코아" , "symbol": symbol, "unit": "USD/MT", "regularMarketPrice": round(cocoa, 2), "type": "soft"}
+        index.append(data)
+    elif symbol == "KC=F":
+        coffee = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Coffee", "nameKR": "커피" ,  "symbol": symbol, "unit": "USd/lb.", "regularMarketPrice": round(coffee, 2), "type": "soft"}
+        index.append(data)
+    elif symbol == "SB=F":
+        sugar = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Sugar", "nameKR": "설탕" ,  "symbol": symbol, "unit": "USd/lb.", "regularMarketPrice": round(sugar, 2), "type": "soft"}
+        index.append(data)
+    elif symbol == "OJ=F":
+        orangeJuice = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Orange Juice", "nameKR": "오렌지쥬스" ,  "symbol": symbol, "unit": "USd/lb.", "regularMarketPrice": round(orangeJuice, 2), "type": "soft"}
+        index.append(data)
+    elif symbol == "CT=F":
+        cotton = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Cotton", "nameKR": "면화" ,  "symbol": symbol, "unit": "USd/lb.", "regularMarketPrice": round(cotton, 2), "type": "soft"}
+        index.append(data)
+    elif symbol == "LBS=F":
+        lumber = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Lumber", "nameKR": "원목" ,  "symbol": symbol, "unit": "USD/1000 board feet", "regularMarketPrice": round(lumber, 2), "type": "soft"}
+        index.append(data)
+    elif symbol == "CU=F":
+        ethanol = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Ethanol", "nameKR": "에탄올" ,  "symbol": symbol, "unit": "USD/gal.", "regularMarketPrice": round(ethanol, 2), "type": "soft"}
+        index.append(data)
+    elif symbol == "LE=F":
+        liveCattle = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Live Cattle", "nameKR": "생우" , "symbol": symbol, "unit": "USd/lb.", "regularMarketPrice": round(liveCattle, 2), "type": "livestock"}
+        index.append(data)
+    elif symbol == "GF=F":
+        feederCattle = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Feeder Cattle", "nameKR": "육우" ,  "symbol": symbol, "unit": "USd/lb.", "regularMarketPrice": round(feederCattle, 2), "type": "livestock"}
+        index.append(data)
+    elif symbol == "HE=F":
+        leanHogs = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {"name": "Lean Hogs", "nameKR": "돈육" ,  "symbol": symbol, "unit": "USd/lb.", "regularMarketPrice": round(leanHogs, 2), "type": "livestock"}
+        index.append(data)
+    elif symbol == "^DJI":
+        dowjones = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {'name': 'Dow Jones Composite', 'nameKR': '다우존스 종합지수', 'symbol': symbol, "unit": "point", 'regularMarketPrice': round(dowjones, 2), "type": "index"}
+        index.append(data)
+    elif symbol == "^IXIC":
+        nasdaqComposition = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {'name': 'Nasdaq Composite', 'nameKR': '나스닥 종합지수', 'symbol': symbol, "unit": "point", 'regularMarketPrice': round(nasdaqComposition, 2), "type": "index"}
+        index.append(data)
+    elif symbol == "^GSPC":
+        sp500 = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {'name': 'S&P500', 'nameKR': 'S&P500', 'symbol': symbol, "unit": "point", 'regularMarketPrice': round(sp500, 2), "type": "index"}
+        index.append(data)
+    elif symbol == "^VIX":
+        vix = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {'name': 'CBOE Volatility Index', 'nameKR': 'VIX 지수', 'symbol': symbol, "unit": "point", 'regularMarketPrice': round(vix, 2), "type": "index"}
+        index.append(data)
+    elif symbol == "^RUT":
+        russell2000 = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {'name': 'Russell 2000', 'nameKR': 'Russell 2000', 'symbol': symbol, "unit": "point", 'regularMarketPrice': round(russell2000, 2), "type": "index"}
+        index.append(data)
+    elif symbol == "^KS11":
+        kospi = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {'name': 'KOSPI Composite Index', 'nameKR': '코스피 종합지수', 'symbol': symbol, "unit": "point", 'regularMarketPrice': round(kospi, 2), "type": "index"}
+        index.append(data)
+    elif symbol == "^KQ11":
+        kosdaq = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {'name': 'Kosdaq Composite Index', 'nameKR': '코스닥 종합지수', 'symbol': symbol, "unit": "point", 'regularMarketPrice': round(kosdaq, 2), "type": "index"}
+        index.append(data)
+    elif symbol == "^N225":
+        nikkei225 = yf.Ticker(symbol).stats()["price"]["regularMarketPrice"]
+        data = {'name': 'Nikkei 225', 'nameKR': '닛케이 225', 'symbol': symbol, "unit": "point", 'regularMarketPrice': round(nikkei225, 2), "type": "index"}
+        index.append(data)
+    elif symbol == "^HSI":
+        hsi = yf.Ticker("^HSI").stats()["price"]["regularMarketPrice"]
+        data = {'name': 'HANG SENG INDEX', 'nameKR': '항셍 종합지수', 'symbol': "^HSI", "unit": "point", 'regularMarketPrice': round(hsi, 2), "type": "index"}
+        index.append(data)
+    elif symbol == "000300.SS":
+        csi300 = yf.Ticker("000300.SS").stats()["price"]["regularMarketPrice"]
+        data = {'name': 'CSI 300 Index', 'nameKR': '상하이&선전 300', 'symbol': "000300.SS", "unit": "point", 'regularMarketPrice': round(csi300, 2), "type": "index"}
+        index.append(data)
+
+    return HttpResponse(json_util.dumps(index, ensure_ascii=False), content_type="application/json;  charset=utf-8")

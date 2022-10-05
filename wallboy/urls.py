@@ -23,5 +23,6 @@ urlpatterns = [
     path("myStockCurrentPrice/owner=<str:owner>", myStockCurrentPrice),
     path("indices", indices),
     path("futures", futures),
-    path("indicesUS", indicesChosen)
+    path("indicesUS", indicesChosen),
+    path("indices/symbol=<str:symbol>", singleIndex)
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
