@@ -395,25 +395,9 @@ def indices(request):
 
     return HttpResponse(json_util.dumps(indices, ensure_ascii=False), content_type="application/json;  charset=utf-8")
 
-# @csrf_exempt
+@csrf_exempt
 def futures(request):
     futures = []
-
-    # crudeoil, brentoil, RBOB Gasoline (100 곱해주면 USd/gal), Natuaral Gas(USD/MMBtu), Heating oil (100 곱해주면 USd/gal)
-    energy = ['CL=F', 'BZ=F', 'RB=F', 'NG=F', 'HO=F']
-
-    # gold (USD/t oz.), silver (USD/t oz.), copper (100* USd/lb.), platinum(USD/t oz.), palladium (USD/t oz.), Aluminum (USD/MT)
-    metal = ['GC=F', 'SI=F', 'HG=F', 'PL=F', 'PA=F', 'ALI=F']
-
-    # corn (USd/bu.), wheat (USd/bu.), oats (USd/bu.), Rough Rice (USD/cwt), Soybean (USd/bu.), Soybean Meal (USD/T.), Soybeam Oil (USd/lb.)
-    grains = ['ZC=F', 'ZW=F', 'ZO=F', 'ZR=F', 'ZS=F', 'ZM=F', 'ZL=F']
-
-    # Cocoa (USD/MT), coffee (USd/lb.), sugar (USd/lb.), orange juice (USd/lb.), cotton (USd/lb.), Lumber (USD/1000 board feet), Ethanol (USD/gal.)
-    softs = ['CC=F', 'KC=F', 'SB=F', 'OJ=F', 'CT=F', 'LBS=F', 'CU=F']
-
-    # Live Cattle (USd/lb.), Feeder Cattle (USd/lb.), Lean Hogs (USd/lb.)
-    livestock = ['LE=F', 'GF=F', 'HE=F']
-
     futureSymbolText = ""
     futureSymbolText2 = ""
 
@@ -495,4 +479,27 @@ def futures(request):
 
     return HttpResponse(json_util.dumps(futures, ensure_ascii=False), content_type="application/json;  charset=utf-8")
         
-        
+
+@csrf_exempt
+def indicesChosen(request):
+    indices = ['^DJI', '^IXIC', '^GSPC']
+    indicesResult = []
+    indicesText = ""
+
+    for i in indices:
+        indicesText += f"{i} "
+
+    date = datetime.today().strftime('%Y-%m-%d')
+    df = yf.download(indicesText[0:-1], date).reset_index(drop=True)
+
+    for i in indices:
+        if i == "^DJI":
+            data = {'name': 'Dow Jones Composite', 'nameKR': '다우존스 종합지수', 'symbol': i, 'adjclose': round(df['Adj Close'][i].iloc[0], 2)}
+        elif i == "^IXIC":
+            data = {'name': 'Nasdaq Composite', 'nameKR': '나스닥 종합지수', 'symbol': i, 'adjclose': round(df['Adj Close'][i].iloc[0], 2)}
+        elif i == "^GSPC":
+            data = {'name': 'S&P500', 'nameKR': 'S&P500', 'symbol': i, 'adjclose': round(df['Adj Close'][i].iloc[0], 2)}
+
+        indicesResult.append(data)
+
+    return HttpResponse(json_util.dumps(indicesResult, ensure_ascii=False), content_type="application/json;  charset=utf-8")

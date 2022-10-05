@@ -22,5 +22,6 @@ urlpatterns = [
     path("myasset/id=<str:id>", myAssetViewAPI),
     path("myStockCurrentPrice/owner=<str:owner>", myStockCurrentPrice),
     path("indices", indices),
-    path("futures", futures)
+    path("futures", futures),
+    path("indicesUS", indicesChosen)
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
