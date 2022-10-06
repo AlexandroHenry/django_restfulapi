@@ -684,3 +684,49 @@ def indexPriceHistory(request, symbol):
         data =  {"date": date, "adjClose": price}
         priceHistory.append(data)
     return HttpResponse(json_util.dumps(priceHistory, ensure_ascii=False), content_type="application/json;  charset=utf-8")
+
+@csrf_exempt
+def indexChosenPeriodPriceHistory(request, symbol, period):
+    datebox = []
+    prices = []
+    priceHistory = []
+
+    print(symbol)
+    print(period)
+
+    if period == "1w":
+        date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+        df = yf.download(symbol, date)
+    elif period == "1mo":
+        date = (datetime.now() - timedelta(days=31)).strftime('%Y-%m-%d')
+        df = yf.download(symbol, date)
+    elif period == "3mo":
+        date = (datetime.now() - timedelta(days=93)).strftime('%Y-%m-%d')
+        df = yf.download(symbol, date)
+    elif period == "6mo":
+        date = (datetime.now() - timedelta(days=186)).strftime('%Y-%m-%d')
+        df = yf.download(symbol, date)
+    elif period == "1y":
+        print(period)
+        date = (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d')
+        df = yf.download(symbol, date)
+    elif period == "3y":
+        date = (datetime.now() - timedelta(days=1095)).strftime('%Y-%m-%d')
+        df = yf.download(symbol, date)
+    elif period == "5y":
+        date = (datetime.now() - timedelta(days=1825)).strftime('%Y-%m-%d')
+        df = yf.download(symbol, date)
+    elif period == "all":
+        df = yf.download(symbol)
+
+    for i in df.index:
+        datebox.append(i.strftime('%Y-%m-%d'))
+
+    for i in df["Adj Close"]:
+        prices.append(i)
+
+    for date, price in zip(datebox, prices):
+        data =  {"date": date, "adjClose": price}
+        priceHistory.append(data)
+    return HttpResponse(json_util.dumps(priceHistory, ensure_ascii=False), content_type="application/json;  charset=utf-8")
+
